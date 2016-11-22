@@ -10,5 +10,8 @@ the use of libraries such as TensorFlow or Theano.  The purpose of this is to
 develop a fundamental understanding of process behind convolutional neural 
 networks.
 
-Currently this project is incompleted but still active.
+Currently this project is incompleted but still active.  
+
+The mnist dataset must downloaded and placed in the resources folder in order
+to run.
 

@@ -22,7 +22,9 @@ def convLayerActivation(inputLayer):
     kernel = (([1,0,1,0,1]),([1,0,1,0,1]),([1,0,1,0,1]),([1,0,1,0,1]),([1,0,1,0,1]))
 
     # Assumes input picture is a square
-    convLayerLength = int(np.sqrt(len(inputLayer[0])-1)) -len(kernel) + 1
+    convLayerLength = int(np.sqrt(len(inputLayer[0][0])-1)) -len(kernel) + 1
+
+    print int(np.sqrt(len(inputLayer[0][0])-1)) -len(kernel) + 1
 
     convLayer = createLayer()
 
@@ -30,22 +32,45 @@ def convLayerActivation(inputLayer):
     #     for image in label:
     #
     print len(inputLayer)
-    for imageNumber in range(0, len(inputLayer)):
-        convolvedImage = []
+    # for imageNumber in range(0, len(inputLayer)):
+    #     convolvedImage = []
+    #
+    #     for convolvedRowNumber in range(0,convLayerLength):
+    #         for convolvedColumnNumber in range(0,convLayerLength): # Convolve over a single 'row'
+    #             # Convolve over a single receptive field
+    #             convolvedUnit = 0.0
+    #             for i in range (0, 5): # Kernel height/row
+    #                 for j in range (0,5): # Kernel width/column
+    #                     # Moves the kernel along the input layer
+    #                     convolvedUnit += kernel[i][j] * inputLayer[imageNumber][((i+convolvedRowNumber)*imageWidth)+1+(j+convolvedColumnNumber)]
+    #                     # print ((i*imageWidth)+convolvedRowNumber)+1+(j+convolvedColumnNumber)
+    #             # convolvedImage.append(convolvedUnit)# Adds to the conv layer
+    #             convolvedImage.append(normalize(convolvedUnit))# performs normalization and nonlinear function to convolved unit
 
-        for convolvedRowNumber in range(0,convLayerLength):
-            for convolvedColumnNumber in range(0,convLayerLength): # Convolve over a single 'row'
-                # Convolve over a single receptive field
-                convolvedUnit = 0.0
-                for i in range (0, 5): # Kernel height/row
-                    for j in range (0,5): # Kernel width/column
-                        # Moves the kernel along the input layer
-                        convolvedUnit += kernel[i][j] * inputLayer[imageNumber][((i+convolvedRowNumber)*imageWidth)+1+(j+convolvedColumnNumber)]
-                        # print ((i*imageWidth)+convolvedRowNumber)+1+(j+convolvedColumnNumber)
-                # convolvedImage.append(convolvedUnit)# Adds to the conv layer
-                convolvedImage.append(normalize(convolvedUnit))# performs normalization and nonlinear function to convolved unit
 
-        convLayer[inputLayer[imageNumber][0]].append(convolvedImage)
+    for index in xrange (0, len(inputLayer)):
+        for image in inputLayer[index]:
+            convolvedImage = []
+            for convolvedRowNumber in range(0, convLayerLength):
+                for convolvedColumnNumber in range(0, convLayerLength):  # Convolve over a single 'row'
+                    # Convolve over a single receptive field
+                    convolvedUnit = 0.0
+                    for i in range(0, 5):  # Kernel height/row
+                        for j in range(0, 5):  # Kernel width/column
+                            # Moves the kernel along the input layer
+                            convolvedUnit += kernel[i][j] * image[((i + convolvedRowNumber) * imageWidth) + 1 + (j + convolvedColumnNumber)]
+                            # convolvedUnit += kernel[i][j] * inputLayer[imageNumber][((i + convolvedRowNumber) * imageWidth) + 1 + (j + convolvedColumnNumber)]
+                            # print ((i*imageWidth)+convolvedRowNumber)+1+(j+convolvedColumnNumber)
+                    # convolvedImage.append(convolvedUnit)# Adds to the conv layer
+                    convolvedImage.append(normalize(convolvedUnit))  # performs normalization and nonlinear function to convolved unit
+
+
+
+
+
+        # print index
+            convLayer[index].append(convolvedImage)
+    print "good so far"
     # print inputLayer[imageNumber][0]
     return convLayer
 
@@ -85,7 +110,8 @@ def poolLayerActivation(inputLayer):
     print len(poolLayer)
 
 def parseData():
-    inputLayer = []
+    inputLayer = createLayer()
+
     i = 0
     with open('resources/mnist_train.csv', 'rb') as csvfile:
         dataSet = csv.reader(csvfile, delimiter=',', quotechar='|')
@@ -106,18 +132,27 @@ def parseData():
 
             # inputLayer = np.append(inputLayer, row.astype(np.int))
 
-            inputLayer.append(image)
-            i +=1
-            if (i % 100 == 0):
-                print len(inputLayer)
+
+            inputLayer[image[0]].append(image)
+            # inputLayer.append(image)
+            # i +=1
+            # if (i % 100 == 0):
+            #     print len(inputLayer)
 
                 # print len(inputLayer)
 
         # print len(inputLayer)
             # inputLayer = np.append(inputLayer, numRow)
 
-    print len(inputLayer)
+    # print "Parse test"
+    # print len(inputLayer[0])
+    # print len(inputLayer)
 
+    # total = 0
+    # for index in inputLayer:
+    #     print len(index)
+    #     total += len(index)
+    # print total
 
 
     return inputLayer
@@ -183,7 +218,7 @@ def createLayer():
         numberDimension.append([])
         # numberDimension.append(np.array([]))
 
-    print len(numberDimension)
+    # print len(numberDimension)
     return numberDimension
 
 # def create2DMatrix(columns):

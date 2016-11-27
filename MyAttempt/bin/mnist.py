@@ -5,16 +5,24 @@ import numpy as np
 
 
 def main():
-    kernelWidth = 5 #int
-    kernelHeight = 5 #int
 
-    kernel = ([1,0,1,0,1], [0,1,0,1,0,1],[1,0,1,0,1],[0,1,0,1,0],[1,0,1,0,1])
-    testK = [1,0,1,0,1]
+    # kernel = ([1,0,1,0,1], [0,1,0,1,0,1],[1,0,1,0,1],[0,1,0,1,0],[1,0,1,0,1])
+    # testK = [1,0,1,0,1]
 
     inputLayer = parseData()
-    # print len(inputLayer)
     layer = convLayerActivation(inputLayer)
     poolLayerActivation(layer)
+
+
+def createLayer():
+    numberDimension = []
+    # numberDimension = np.array([])
+    for i in xrange (10):
+        numberDimension.append([])
+        # numberDimension.append(np.array([]))
+
+    # Returns a layer in which the index is the label of the image
+    return numberDimension
 
 
 def parseData():
@@ -45,7 +53,7 @@ def parseData():
 
 def convLayerActivation(inputLayer):
     imageWidth = int(np.sqrt(len(inputLayer[0][0])))
-    kernel = (([1,0,1,0,1]),([1,0,1,0,1]),([1,0,1,0,1]),([1,0,1,0,1]),([1,0,1,0,1]))
+    kernel = (([1,0,1,0,1]),([1,0,1,0,1]),([1,0,1,0,1]),([1,0,1,0,1]),([1,0,1,0,1])) # Vales are currently arbitrary weights for a single sample kernel
 
     print "Convolving Layers..."
 
@@ -54,9 +62,6 @@ def convLayerActivation(inputLayer):
 
     # Assumes input picture is a square
     convLayerLength = int(np.sqrt(len(inputLayer[0][0]))) -len(kernel) + 1
-
-    # print "In Conv Layer"
-    # print int(np.sqrt(len(inputLayer[0][0]))) -len(kernel) + 1
 
     convLayer = createLayer()
 
@@ -75,9 +80,9 @@ def convLayerActivation(inputLayer):
                     # convolvedImage.append(convolvedUnit)# Adds to the conv layer
                     convolvedImage.append(normalize(convolvedUnit))  # performs normalization and nonlinear function to convolved unit
 
+            # Add the convolved feature map to the output layer
             convLayer[index].append(convolvedImage)
-    # print "good so far"
-    # print inputLayer[imageNumber][0]
+
     return convLayer
 
 def poolLayerActivation(inputLayer):
@@ -85,7 +90,6 @@ def poolLayerActivation(inputLayer):
     poolWidth = 2
     # poolWindow = np.array([])
     # poolLayer = np.array([]))
-
 
     print "Pooling Layers..."
 
@@ -97,25 +101,22 @@ def poolLayerActivation(inputLayer):
 
             poolImage = []
             # Assumes image is a square
-            for row in range (0, imageLength/poolHeight):
-                for column in range (0, imageLength/poolWidth):
+            for row in xrange (imageLength/poolHeight):
+                for column in xrange (imageLength/poolWidth):
                     poolWindow = []
-                    for i in range (0,poolWidth):
-                        for j in range(0, poolHeight):
+                    for i in xrange (poolWidth):
+                        for j in xrange(poolHeight):
                             poolWindow.append(image[((i+(row*poolHeight))*imageLength)+(j+(column*poolWidth))])
 
-                    # print poolWindow
                     poolImage.append(np.max(poolWindow))
-                    # print len(poolImage)
 
             poolLayer[label].append(poolImage)
-            # print len(poolLayer)
 
-    total = 0
-    for index in poolLayer:
-        print len(index)
-        total += len(index)
-    print total
+    # total = 0
+    # for index in poolLayer:
+    #     print len(index)
+    #     total += len(index)
+    # print total
 
 
 def normalize(input):
@@ -123,17 +124,6 @@ def normalize(input):
 
 def reLU(input):
     return np.maximum(0,input)
-
-def createLayer():
-    numberDimension = []
-    # numberDimension = np.array([])
-    for i in range (0, 10):
-        numberDimension.append([])
-        # numberDimension.append(np.array([]))
-
-    # print len(numberDimension)
-    return numberDimension
-
 
 
 main()

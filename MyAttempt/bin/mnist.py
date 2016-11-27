@@ -58,7 +58,7 @@ def convLayerActivation(inputLayer):
                     for i in range(0, 5):  # Kernel height/row
                         for j in range(0, 5):  # Kernel width/column
                             # Moves the kernel along the input layer
-                            convolvedUnit += kernel[i][j] * image[((i + convolvedRowNumber) * imageWidth) + 1 + (j + convolvedColumnNumber)]
+                            convolvedUnit += kernel[i][j] * image[((i + convolvedRowNumber) * imageWidth) + (j + convolvedColumnNumber)]
                             # convolvedUnit += kernel[i][j] * inputLayer[imageNumber][((i + convolvedRowNumber) * imageWidth) + 1 + (j + convolvedColumnNumber)]
                             # print ((i*imageWidth)+convolvedRowNumber)+1+(j+convolvedColumnNumber)
                     # convolvedImage.append(convolvedUnit)# Adds to the conv layer
@@ -121,10 +121,11 @@ def parseData():
         for line in csvfile:
             row = line.split(",")
             image = []
-            for unit in row:
+            for unit in xrange (len(row)-1):
+            # for unit in row:
                 # image = np.append(image, unit.astype(np.int))
                 # image = np.append(image, int(unit))
-                image.append(int(unit))
+                image.append(int(row[unit+1]))
             # numRow = np.array([])
             # for unit in rows[-1]:
                 # numRow = np.append(numRow, int(unit))
@@ -134,6 +135,7 @@ def parseData():
 
 
             inputLayer[image[0]].append(image)
+            print len(image)
             # inputLayer.append(image)
             # i +=1
             # if (i % 100 == 0):

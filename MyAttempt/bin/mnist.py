@@ -12,16 +12,42 @@ def main():
     testK = [1,0,1,0,1]
 
     inputLayer = parseData()
-    print len(inputLayer)
+    # print len(inputLayer)
     layer = convLayerActivation(inputLayer)
     poolLayerActivation(layer)
 
 
+def parseData():
+    inputLayer = createLayer()
+
+    print "Parsing Data..."
+
+    with open('resources/mnist_train.csv', 'rb') as csvfile:
+        # Parse string values for numbers into int types
+        for line in csvfile:
+            row = line.split(",")
+            image = []
+            index = int(row[0])
+
+            for unit in xrange (len(row)-1): # Store all data values except initial tag
+                image.append(int(row[unit+1]))
+
+            inputLayer[index].append(image)
+
+    # total = 0
+    # for index in inputLayer:
+    #     print len(index)
+    #     total += len(index)
+    # print total
+
+    return inputLayer
+
+
 def convLayerActivation(inputLayer):
     imageWidth = int(np.sqrt(len(inputLayer[0][0])))
-    print imageWidth
-    # imageWidth = 28;
     kernel = (([1,0,1,0,1]),([1,0,1,0,1]),([1,0,1,0,1]),([1,0,1,0,1]),([1,0,1,0,1]))
+
+    print "Convolving Layers..."
 
     kernelHeight =  len(kernel)
     kernelWidth =  len(kernel[0]) # Index is arbitrary
@@ -50,114 +76,46 @@ def convLayerActivation(inputLayer):
                     convolvedImage.append(normalize(convolvedUnit))  # performs normalization and nonlinear function to convolved unit
 
             convLayer[index].append(convolvedImage)
-    print "good so far"
+    # print "good so far"
     # print inputLayer[imageNumber][0]
     return convLayer
 
 def poolLayerActivation(inputLayer):
     poolHeight = 2
     poolWidth = 2
-    poolWindow = []
     # poolWindow = np.array([])
     # poolLayer = np.array([]))
-    poolLayer = []
-
-    imageLength = int(np.sqrt(len(inputLayer[0][0])))
 
 
-    # print len(inputLayer)
+    print "Pooling Layers..."
 
-    createLayer()
-    for label in inputLayer:
-        for image in label:
+    imageLength = int(np.sqrt(len(inputLayer[0][0]))) # Width and Height of input image
 
+    poolLayer = createLayer()
+    for label in xrange(len(inputLayer)):
+        for image in inputLayer[label]:
 
-
-            print np.sqrt(image)
+            poolImage = []
             # Assumes image is a square
             for row in range (0, imageLength/poolHeight):
                 for column in range (0, imageLength/poolWidth):
+                    poolWindow = []
                     for i in range (0,poolWidth):
                         for j in range(0, poolHeight):
                             poolWindow.append(image[((i+(row*poolHeight))*imageLength)+(j+(column*poolWidth))])
 
-                    print poolWindow
-                    poolLayer.append(np.maximum(poolWindow))
-                    print poolLayer[-1]
+                    # print poolWindow
+                    poolImage.append(np.max(poolWindow))
+                    # print len(poolImage)
 
+            poolLayer[label].append(poolImage)
+            # print len(poolLayer)
 
-
-    print len(poolLayer)
-
-def parseData():
-    inputLayer = createLayer()
-
-    with open('resources/mnist_train.csv', 'rb') as csvfile:
-        # Parse string values for numbers into int types
-        for line in csvfile:
-            row = line.split(",")
-            image = []
-            index = int(row[0])
-
-            for unit in xrange (len(row)-1): # Store all data values except initial tag
-                image.append(int(row[unit+1]))
-
-            inputLayer[index].append(image)
-
-    # total = 0
-    # for index in inputLayer:
-    #     print len(index)
-    #     total += len(index)
-    # print total
-
-    return inputLayer
-
-#
-# def parseData():
-#     inputLayer = np.empty([0,785])
-#     i = 0
-#     with open('resources/mnist_train.csv', 'rb') as csvfile:
-#         dataSet = csv.reader(csvfile, delimiter=',', quotechar='|')
-#         # row = np.array([])
-#         row = np.array([])
-#         # Parse string values for numbers into int types
-#         for line in csvfile:
-#             row = line.split(",")
-#             image = np.array([])
-#             for unit in row:
-#                 # image = np.append(image, unit.astype(np.int))
-#                 # image = np.append(image, int(unit))
-#                 image = np.append(image, int(unit))
-#             # numRow = np.array([])
-#             # for unit in rows[-1]:
-#                 # numRow = np.append(numRow, int(unit))
-#                 # print int(unit)
-#
-#             # inputLayer = np.append(inputLayer, row.astype(np.int))
-#
-#             # inputLayer = np.vstack((inputLayer, image))
-#                 inputLayer = np.vstack((inputLayer, image))
-#             # inputLayer = np.append(inputLayer, image)
-#             if (i % 1000 == 0):
-#                 # print len(inputLayer)
-#                 print type(inputLayer[-1])
-#             i +=1
-#             # if (i % 100 == 0):
-#             #     print len(inputLayer)
-#
-#                 # print len(inputLayer)
-#
-#         # print len(inputLayer)
-#             # inputLayer = np.append(inputLayer, numRow)
-#
-#     print len(inputLayer)
-#
-#
-#
-#     return inputLayer
-
-
-
+    total = 0
+    for index in poolLayer:
+        print len(index)
+        total += len(index)
+    print total
 
 
 def normalize(input):
@@ -175,14 +133,6 @@ def createLayer():
 
     # print len(numberDimension)
     return numberDimension
-
-# def create2DMatrix(columns):
-#     matrix = []
-#     rowList = []
-#     for i in range(0,columns):
-#         matrix.append(rowList)
-#     return matrix
-
 
 
 
